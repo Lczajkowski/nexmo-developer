@@ -66,9 +66,17 @@ class Concatenation extends React.Component {
     return a
   }
 
-  shouldEncodeAs16Bit() {
-    var remainder = difference(this.splitStringByCodePoint(), [...safeCharacters, ...extGSMChars])
+  checkForSpecialCharacters(values) {
+    var remainder = difference(this.splitStringByCodePoint(), values)
     return remainder.length !== 0
+  }
+
+  shouldEncodeAs16Bit() {
+    return this.checkForSpecialCharacters(safeCharacters)
+  }
+
+  shouldUseUnicode() {
+    return this.checkForSpecialCharacters([...safeCharacters, ...extGSMChars])
   }
 
   renderUdf(split) {
@@ -160,7 +168,7 @@ class Concatenation extends React.Component {
               <b>Unicode is Required?</b>
             </div>
             <div className="Vlt-col Vlt-col--2of3">
-              { this.renderUtfIcon(this.shouldEncodeAs16Bit()) }
+              { this.renderUtfIcon(this.shouldUseUnicode()) }
             </div>
             <hr className="hr--shorter"/>
             <div className="Vlt-col Vlt-col--1of3">
